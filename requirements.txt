@@ -6,4 +6,4 @@ pdfplumber
 gradio
 pycord
 discord
-
+pypandoc
