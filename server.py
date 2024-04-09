@@ -5,9 +5,12 @@ import json
 import openai
 import dotenv
 import docx
+import time
+import os
 from document_analysis import JudgeDecision2116278PDF
 from discord.utils import escape_markdown
 from config import get_config, get_logger, conversation, clear_conversation
+import pypandoc
 
 dotenv.load_dotenv()
 
@@ -114,6 +117,20 @@ def process_file(files):
   
     return "Your chat is ready. Please enter your question in the textbox below."
 
+def save_file(content: str):
+  folder_name = 'outputs'
+  file_name = os.path.join(folder_name,f'{time.time()}output')
+  input_ext = ".md"
+  output_ext = ".docx"
+  input_file_path = f'{file_name}{input_ext}'
+  output_file_path = f'{file_name}{output_ext}'
+  with open(input_file_path, 'w') as output_file:
+    output_file.write(content)
+    output_file.close()
+    pypandoc.convert_file(input_file_path, 'docx', outputfile=output_file_path, format='md')
+  # return file_name
+  
+
 def process_question(question: str):
   global conversation
   # Use OpenAI to create a chat based on the text
@@ -164,6 +181,7 @@ def process_question(question: str):
       "role": role,
       "content": content
     })
+  save_file(content)
   yield ""
   
 # Create a gradio app to upload the file and process it
