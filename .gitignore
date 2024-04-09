@@ -133,3 +133,6 @@ dmypy.json
 .pyre/
 userconfig.json
 log.txt
+
+# outputs
+outputs
