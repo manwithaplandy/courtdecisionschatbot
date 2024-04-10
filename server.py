@@ -117,7 +117,8 @@ def process_file(files):
   
     return "Your chat is ready. Please enter your question in the textbox below."
 
-def save_file(content: str):
+def save_file(conversation):
+  logger.info(conversation)
   folder_name = 'outputs'
   file_name = os.path.join(folder_name,f'{time.time()}output')
   input_ext = ".md"
@@ -125,11 +126,11 @@ def save_file(content: str):
   input_file_path = f'{file_name}{input_ext}'
   output_file_path = f'{file_name}{output_ext}'
   with open(input_file_path, 'w') as output_file:
-    output_file.write(content)
+    output_file.write(conversation[-1]["content"])
     output_file.close()
     pypandoc.convert_file(input_file_path, 'docx', outputfile=output_file_path, format='md')
-  # return file_name
-  
+  return file_name, output_file_path
+
 
 def process_question(question: str):
   global conversation
@@ -164,7 +165,7 @@ def process_question(question: str):
     if len(chunk.choices)  > 0:
       try:
         if(chunk.choices[0].delta.content is None):
-          continue;
+          continue
         if(chunk.choices[0].finish_reason == "length" or chunk.choices[0].finish_reason == "content_filter"):
           content = content + f" (error reason: {chunk.choices[0].finish_reason})"
           print(f"stop reason: {chunk.choices[0].finish_reason}")
@@ -181,8 +182,7 @@ def process_question(question: str):
       "role": role,
       "content": content
     })
-  save_file(content)
-  yield ""
+  return content
   
 # Create a gradio app to upload the file and process it
 app = gr.Interface(
