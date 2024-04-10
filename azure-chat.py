@@ -75,6 +75,9 @@ with gr.Blocks(title="AI") as markdown_bot:
             )
             #btn = gr.UploadButton("📁", file_types=["image", "video", "audio"])
         
+        with gr.Row("Download Buttom"):
+            gr_submit_button = gr.Button("Save last response to file")
+        
         with gr.Row("Process and download"):
             gr_outputs = [
                 gr.File(
@@ -83,7 +86,6 @@ with gr.Blocks(title="AI") as markdown_bot:
                     file_types=[".txt", ".text"]
                     )
                 ]
-            gr_submit_button = gr.Button("Save last response to file")
 
         gr_submit_button.click(download_file, None, gr_outputs)
 
